@@ -1,5 +1,94 @@
 let currentCategory = 'all';
 let currentSearch = '';
+let updateHistory = JSON.parse(localStorage.getItem('recipeUpdateHistory') || '[]');
+
+function addUpdateRecord(recipe) {
+  const record = {
+    id: recipe.id,
+    name: recipe.name,
+    category: recipe.category,
+    categoryName: recipe.categoryName,
+    time: new Date().toLocaleString('zh-CN'),
+    timestamp: Date.now()
+  };
+  
+  updateHistory.unshift(record);
+  
+  if (updateHistory.length > 50) {
+    updateHistory = updateHistory.slice(0, 50);
+  }
+  
+  localStorage.setItem('recipeUpdateHistory', JSON.stringify(updateHistory));
+  updateNotificationBadge();
+}
+
+function updateNotificationBadge() {
+  const badge = document.getElementById('notificationBadge');
+  const lastVisit = parseInt(localStorage.getItem('lastVisitTimestamp') || '0');
+  const newUpdates = updateHistory.filter(r => r.timestamp > lastVisit);
+  badge.textContent = newUpdates.length > 0 ? newUpdates.length : '';
+  badge.style.display = newUpdates.length > 0 ? 'block' : 'none';
+}
+
+function renderHistory() {
+  const historyList = document.getElementById('historyList');
+  
+  if (updateHistory.length === 0) {
+    historyList.innerHTML = `
+      <div class="empty-history">
+        <div class="empty-history-icon">📭</div>
+        <p>暂无更新记录</p>
+      </div>
+    `;
+    return;
+  }
+  
+  historyList.innerHTML = updateHistory.map(record => {
+    const categoryColors = {
+      staple: '#ff9f43',
+      vegetable: '#26de81',
+      meat: '#ff6b6b',
+      soup: '#45aaf2',
+      snack: '#fd79a8',
+      dessert: '#a29bfe',
+      midnight: '#fdcb6e',
+      spice: '#e17055'
+    };
+    
+    return `
+      <div class="history-item" onclick="showRecipeDetail(${record.id})">
+        <div class="recipe-name">${record.name}</div>
+        <span class="recipe-category" style="background: ${categoryColors[record.category]}">${record.categoryName}</span>
+        <div class="update-time">🕐 ${record.time}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function initHistoryModal() {
+  const historyBtn = document.getElementById('historyBtn');
+  const modal = document.getElementById('historyModal');
+  const closeBtn = document.getElementById('closeModal');
+  
+  historyBtn.addEventListener('click', () => {
+    modal.classList.add('active');
+    renderHistory();
+    localStorage.setItem('lastVisitTimestamp', Date.now().toString());
+    updateNotificationBadge();
+  });
+  
+  closeBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+  });
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('active');
+    }
+  });
+  
+  updateNotificationBadge();
+}
 
 function getDailyRecommend() {
   const today = new Date();
@@ -181,6 +270,40 @@ function init() {
   renderRecipeList();
   initCategoryNav();
   initSearch();
+  initHistoryModal();
+  initializeDemoHistory();
+}
+
+function initializeDemoHistory() {
+  let savedHistory = JSON.parse(localStorage.getItem('recipeUpdateHistory') || '[]');
+  const existingIds = new Set(savedHistory.map(r => r.id));
+  
+  const recentRecipes = [...recipes].reverse();
+  const now = Date.now();
+  
+  recentRecipes.forEach((recipe, index) => {
+    if (!existingIds.has(recipe.id)) {
+      const record = {
+        id: recipe.id,
+        name: recipe.name,
+        category: recipe.category,
+        categoryName: recipe.categoryName,
+        time: new Date(now - (index * 86400000)).toLocaleString('zh-CN'),
+        timestamp: now - (index * 86400000)
+      };
+      savedHistory.unshift(record);
+    }
+  });
+  
+  savedHistory.sort((a, b) => b.timestamp - a.timestamp);
+  
+  if (savedHistory.length > 50) {
+    savedHistory = savedHistory.slice(0, 50);
+  }
+  
+  localStorage.setItem('recipeUpdateHistory', JSON.stringify(savedHistory));
+  updateHistory = savedHistory;
+  updateNotificationBadge();
 }
 
 init();
