@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>每日菜谱 - 美食推荐</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>🍳 每日菜谱</h1>
+      <p class="subtitle">今天吃什么？让菜谱来帮你决定</p>
+      <a href="feast.html" class="feast-link">🎊 吃席菜单生成器</a>
+    </header>
+
+    <section class="daily-recommend">
+      <h2>📅 今日推荐</h2>
+      <p class="recommend-date" id="recommendDate"></p>
+      <div class="recommend-grid" id="dailyRecommend"></div>
+    </section>
+
+    <div class="search-container">
+      <input type="text" class="search-input" id="searchInput" placeholder="🔍 搜索菜谱名称、食材..." autocomplete="off">
+    </div>
+
+    <nav class="category-nav">
+      <button class="category-btn active" data-category="all">全部</button>
+      <button class="category-btn" data-category="staple">主食</button>
+      <button class="category-btn" data-category="vegetable">素菜</button>
+      <button class="category-btn" data-category="meat">荤菜</button>
+      <button class="category-btn" data-category="soup">汤</button>
+      <button class="category-btn" data-category="snack">小吃</button>
+      <button class="category-btn" data-category="dessert">甜点</button>
+      <button class="category-btn" data-category="midnight">宵夜</button>
+      <button class="category-btn" data-category="spice">🧂 香料</button>
+    </nav>
+
+    <section class="recipe-list" id="recipeList"></section>
+  </div>
+
+  <script src="recipes.js"></script>
+  <script src="spices.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
