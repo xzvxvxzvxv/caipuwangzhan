@@ -608,32 +608,29 @@ function formatAIResponse(text) {
   if (!ingredientTable && !timeCards && !timelineHTML) {
     try {
       let jsonStr = text.replace(/```json|```/g, '').trim();
-      // 清理JSON字符串中的常见错误
+      
+      // 增强的JSON清理逻辑
       jsonStr = jsonStr
         .replace(/"amount":\s*:/g, '"amount":')
-        .replace(/"note":\s*:\s*"([^"\\]*(\\.[^"\\]*)*)(?<!\\)"/g, (match, content) => {
-          return `"note":"${content.replace(/"/g, '\"')}"`;
-        })
-        .replace(/([^\\])"([^"\\]*(\\.[^"\\]*)*)(?<!\\)"/g, '$1"$2"')
-        .replace(/\s*([,:])\s*/g, '$1');
+        .replace(/"note":\s*:/g, '"note":')
+        .replace(/\s+/g, ' ')
+        .trim();
       
-      // 检查并修复未终止的字符串
-      let quoteCount = 0;
-      let inString = false;
-      let lastQuoteIndex = -1;
+      // 尝试找到完整的JSON对象
+      const jsonStart = jsonStr.indexOf('{');
+      const jsonEnd = jsonStr.lastIndexOf('}');
       
-      for (let i = 0; i < jsonStr.length; i++) {
-        if (jsonStr[i] === '"' && jsonStr[i-1] !== '\\') {
-          inString = !inString;
-          quoteCount++;
-          lastQuoteIndex = i;
+      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+        jsonStr = jsonStr.substring(jsonStart, jsonEnd + 1);
+      }
+      
+      // 修复字符串中的引号问题
+      jsonStr = jsonStr.replace(/"([^"]*)"([^":,}\]]*)"([^"]*)":/g, (match, p1, p2, p3) => {
+        if (p2.includes('"') || p3.includes('"')) {
+          return `"${p1}${p2}${p3}":`;
         }
-      }
-      
-      // 如果引号数量为奇数，尝试修复
-      if (quoteCount % 2 !== 0 && lastQuoteIndex > 0) {
-        jsonStr = jsonStr.substring(0, lastQuoteIndex) + '"' + jsonStr.substring(lastQuoteIndex);
-      }
+        return match;
+      });
       
       const jsonData = JSON.parse(jsonStr);
       if (!jsonData.dishes && !jsonData.timeline) {
@@ -642,24 +639,65 @@ function formatAIResponse(text) {
       }
     } catch (e) {
       console.error('Final JSON parse error:', e);
-      // 尝试更简单的修复方法
+      console.log('Attempting to extract and fix JSON...');
+      
+      // 尝试提取并修复JSON
       try {
-        // 移除可能导致问题的字符
         let jsonStr = text.replace(/```json|```/g, '').trim();
-        jsonStr = jsonStr
-          .replace(/[^\x00-\x7F]/g, '') // 移除非ASCII字符
-          .replace(/"[^"\\]*(\\.[^"\\]*)*"/g, (match) => {
-            return match.replace(/"/g, '"');
-          })
-          .replace(/\s+/g, ' ');
         
-        const jsonData = JSON.parse(jsonStr);
-        if (!jsonData.dishes && !jsonData.timeline) {
-          ingredientTable = renderIngredientTable(jsonData);
-          textWithoutJson = '';
+        // 找到第一个 { 和最后一个 }
+        const start = jsonStr.indexOf('{');
+        const end = jsonStr.lastIndexOf('}');
+        
+        if (start !== -1 && end !== -1) {
+          jsonStr = jsonStr.substring(start, end + 1);
+          
+          // 逐字符解析，修复字符串
+          let fixed = '';
+          let inString = false;
+          let escapeNext = false;
+          
+          for (let i = 0; i < jsonStr.length; i++) {
+            const char = jsonStr[i];
+            
+            if (escapeNext) {
+              fixed += char;
+              escapeNext = false;
+              continue;
+            }
+            
+            if (char === '\\') {
+              fixed += char;
+              escapeNext = true;
+              continue;
+            }
+            
+            if (char === '"') {
+              inString = !inString;
+              fixed += char;
+              continue;
+            }
+            
+            // 如果在字符串内，保留所有字符
+            if (inString) {
+              fixed += char;
+            } else {
+              // 不在字符串内，只保留JSON结构字符
+              if ('{},:[]'.includes(char) || /\s/.test(char) || /[\w\-]/.test(char)) {
+                fixed += char;
+              }
+            }
+          }
+          
+          const jsonData = JSON.parse(fixed);
+          if (!jsonData.dishes && !jsonData.timeline) {
+            ingredientTable = renderIngredientTable(jsonData);
+            textWithoutJson = '';
+          }
         }
       } catch (e2) {
         console.error('Simplified JSON parse error:', e2);
+        console.log('Failed to parse JSON, displaying as text');
       }
     }
   }
