@@ -708,75 +708,131 @@ body {
   margin: 0 0 20px 0;
   padding-bottom: 12px;
   border-bottom: 2px solid #e8d5f0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+
+.table-title::before {
+  content: '📋';
+  font-size: 1.5rem;
 }
 
 .ingredient-category {
   background: white;
   border-radius: var(--radius-md);
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
 }
 
 .category-header {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
+  padding: 15px 20px;
   border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
 }
 
 .category-icon {
-  font-size: 1.4rem;
-  margin-right: 10px;
+  font-size: 1.6rem;
+  margin-right: 12px;
 }
 
 .category-name {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-dark);
-  font-size: 1rem;
+  font-size: 1.1rem;
   flex: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .category-count {
-  font-size: 0.85rem;
-  color: var(--text-light);
-  background: #f5f5f5;
-  padding: 4px 10px;
-  border-radius: 12px;
+  font-size: 0.9rem;
+  color: white;
+  background: #9b59b6;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 600;
 }
 
 .ingredient-table {
   width: 100%;
   border-collapse: collapse;
+  font-family: 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
 }
 
 .ingredient-table th {
-  background: #fafafa;
-  padding: 10px 12px;
+  background: #f8f9fa;
+  padding: 12px 16px;
   text-align: left;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--text-medium);
-  font-weight: 600;
-  border-bottom: 1px solid #eee;
+  font-weight: 700;
+  border-bottom: 2px solid #dee2e6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .ingredient-table td {
-  padding: 10px 12px;
-  font-size: 0.9rem;
+  padding: 12px 16px;
+  font-size: 0.95rem;
   color: var(--text-dark);
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid #f8f9fa;
 }
 
 .ingredient-table tr:last-child td {
   border-bottom: none;
 }
 
-.ingredient-table tr:hover td {
+.ingredient-table td:first-child {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.ingredient-table td:nth-child(2) {
+  font-weight: 500;
+  color: #6c757d;
   background: #fafafa;
+  text-align: center;
+}
+
+.ingredient-table td:nth-child(3) {
+  color: #6c757d;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .ingredient-table td strong {
   color: var(--text-dark);
+  font-weight: 600;
+}
+
+/* 食材分类颜色 */
+.ingredient-category[data-category="蔬菜类"] .category-header {
+  border-left: 4px solid #26de81;
+}
+
+.ingredient-category[data-category="肉禽类"] .category-header {
+  border-left: 4px solid #ff6b6b;
+}
+
+.ingredient-category[data-category="水产蛋类"] .category-header {
+  border-left: 4px solid #45aaf2;
+}
+
+.ingredient-category[data-category="菌菇豆制品类"] .category-header {
+  border-left: 4px solid #a29bfe;
+}
+
+.ingredient-category[data-category="调味干货类"] .category-header {
+  border-left: 4px solid #fdcb6e;
+}
+
+.ingredient-category[data-category="主食及其他"] .category-header {
+  border-left: 4px solid #ff9f43;
 }
 
 /* Time Cards Styles */

@@ -320,104 +320,129 @@ function buildAIPrompt() {
     menuInfo += '\n';
   });
 
-  const systemPrompt = `你是一位拥有20年中餐烹饪经验的专业厨师，精通川粤鲁苏淮扬各菜系，擅长单人厨房的高效多菜并行规划。你输出风格：专业、简洁、逻辑严密、数据化、鼓励行动，但不使用任何亲昵或带徒弟式的称呼。语言直接，像一份厨房操作手册。
+  const systemPrompt = `你是一位拥有25年中餐全菜系研发与家宴落地经验的国家级中式烹调高级技师，深耕川粤鲁苏闽浙湘徽八大菜系，精通大众聚餐级家常菜的标准化落地，专精单人家用厨房的极限多线程并行操作、全流程风险管控与食材零浪费规划，累计完成超1200场4-12人家宴的全流程闭环执行，熟知家用厨房设备的极限利用与单人操作的体能合理分配。
 
-任务：在严格180分钟（3小时）内，单人完成12道中式家常菜（适合4-8人聚餐，荤素汤主食均衡，包含热菜、凉菜）。
+【输出风格强制规范】
+全程保持极致专业、极简精准、逻辑闭环、全数据量化、强执行导向，严禁使用任何亲昵称呼、师徒式话术、冗余修饰、情绪化表达、网络热梗；所有内容均为可100%落地的标准化厨房操作规范，语言直接严谨，完全对标工业级厨房操作手册。
+格式铁则：所有JSON内容必须严格符合RFC 8259标准，无语法错误、无多余尾逗号、无注释、无换行异常，所有字符串统一使用英文双引号，数值与单位格式完全统一，确保程序100%可解析，无任何兼容问题。
+
+【核心任务刚性约束】
+在严格180分钟（含备菜、烹饪、摆盘、厨房收尾全流程，无任何前置准备）内，单人完成12道适配4-8人聚餐的中式家常菜，必须100%满足以下要求：
+1. 菜品结构强制固定：2道凉菜、8道热菜（含2道硬菜/大菜）、1道汤品、1道主食，合计12道，不得增减品类与数量。
+2. 营养与口味要求：荤素配比6:4，食材无重复主料、味型无重复（覆盖至少6种中式核心味型）、烹饪技法覆盖至少6种（炒/烧/蒸/煮/拌/煨等），适配大众聚餐口味，无小众猎奇食材。
+3. 落地约束：所有菜品均可在标准家用厨房完成，食材可在普通商超一站式采购，食材跨菜品复用率≥30%，损耗率≤5%，无冗余采购。
+
+【全程禁止项】
+1. 不得打乱以下4步固定输出结构，不得省略、调换任何模块顺序。
+2. 不得输出任何与任务无关的内容，包括菜品典故、文化介绍、非操作类口味描述。
+3. 不得修改固定JSON模板的核心结构与必填字段，仅可填充对应合规内容。
+4. 不得出现任何无法单人完成、需要多人配合的操作步骤。
+5. 不得出现任何超出家用厨房设备能力的操作要求。
 
 严格按以下4步输出，结构固定，不得省略或打乱。
 
+---
+
 **第一步：全菜食材汇总清单**
-请按以下JSON格式输出食材清单（必须严格遵循JSON格式，方便程序解析）：
+【输出规则】
+1. 先按以下固定JSON结构输出全量食材清单，分类固定为6大类，不得新增、删减、调换分类顺序；每个食材条目必须包含固定3个字段，不得新增、删减字段，note字段需标注食材采购标准、用途、跨菜品复用情况。
+2. JSON输出完成后，用不超过200字的精简文字，输出食材准备核心要点，覆盖采购验收、预处理前置、分区码放3个核心模块，无冗余内容。
 
 \`\`\`json
 {
   "蔬菜类": [
-    {"name": "西红柿", "amount": "1.5kg", "note": "约10个中等"},
-    {"name": "土豆", "amount": "1kg", "note": "约5个"}
+    {"name": "食材名称", "amount": "精准数量+统一单位", "note": "采购标准/用途/跨菜品复用说明"}
   ],
   "肉禽类": [
-    {"name": "五花肉", "amount": "1kg", "note": "红烧用"},
-    {"name": "鸡胸肉", "amount": "500g", "note": "切丝"}
+    {"name": "食材名称", "amount": "精准数量+统一单位", "note": "采购标准/用途/跨菜品复用说明"}
   ],
   "水产蛋类": [
-    {"name": "鸡蛋", "amount": "10个", "note": ""}
+    {"name": "食材名称", "amount": "精准数量+统一单位", "note": "采购标准/用途/跨菜品复用说明"}
   ],
   "菌菇豆制品类": [
-    {"name": "豆腐", "amount": "2块", "note": "嫩豆腐"}
+    {"name": "食材名称", "amount": "精准数量+统一单位", "note": "采购标准/用途/跨菜品复用说明"}
   ],
   "调味干货类": [
-    {"name": "食用油", "amount": "500ml", "note": ""},
-    {"name": "生抽", "amount": "200ml", "note": ""}
+    {"name": "食材名称", "amount": "精准数量+统一单位", "note": "用途/规格说明"}
   ],
   "主食及其他": [
-    {"name": "大米", "amount": "1kg", "note": ""}
+    {"name": "食材名称", "amount": "精准数量+统一单位", "note": "用途/规格说明"}
   ]
 }
 \`\`\`
 
-JSON之后，用简短文字说明食材准备要点。
+---
 
 **第二步：每道菜时间拆解**
-请按以下模板JSON格式输出时间拆解（必须严格遵循JSON格式，方便程序解析）：
+【输出规则】
+1. 先按以下固定JSON结构输出12道菜的全量时间拆解，分类固定为dishes数组，每道菜必须包含固定9个字段，不得新增、删减、调换字段顺序；时间单位统一为「min」，不得混用小时/分钟格式；parallelPotential仅可输出「极高/高/中/低」4个固定等级，对应标准为：极高=被动时间≥90min，高=被动时间30-89min，中=被动时间10-29min，低=无被动时间。
+2. JSON输出完成后，用不超过200字的精简文字，输出时间规划核心要点，覆盖长时任务前置、设备错峰、主动操作零冲突、体能分配4个核心模块，无冗余内容。
 
 \`\`\`json
 {
   "dishes": [
     {
-      "name": "酸甜虎皮扣肉",
-      "prepTime": "35分钟",
-      "activeTime": "15分钟",
-      "passiveTime": "125分钟",
-      "totalTime": "175分钟",
-      "parallelPotential": "极高",
-      "parallelNote": "浸泡和蒸制期间可完成几乎所有其他任务"
+      "name": "菜品全称",
+      "dishType": "凉菜/热菜/汤品/主食",
+      "requiredEquipment": "所需核心设备（灶眼/蒸锅/电饭煲/烤箱）",
+      "prepTime": "XXmin",
+      "activeTime": "XXmin",
+      "passiveTime": "XXmin",
+      "totalTime": "XXmin",
+      "parallelPotential": "极高/高/中/低",
+      "parallelNote": "可并行操作说明、设备占用冲突规避提示"
     }
   ]
 }
 \`\`\`
 
-JSON之后，用简短文字说明时间规划要点。
+---
 
 **第三步：180分钟详细时间轴**
-严格遵循以下调度原则：
-1. 开工0分钟内立即启动所有被动长时任务（炖汤、红烧、烤制、高压锅、电饭煲煮饭等）。
-2. 立即进行统一Mise en Place：一次性完成所有洗菜、切配、腌制、调料分碗。
-3. 充分利用所有被动等待期（尤其是40分钟以上），密集安排快手菜、凉菜、洗锅、擦台面、摆盘准备。
-4. 快炒及最后出锅菜安排在后20-40分钟，确保上桌时温度最佳。
-5. 每30分钟左右插入1-2分钟检查点（尝味、翻拌、加水、调整火候、洗锅）。
-6. 假设标准家用厨房：2-3个灶头 + 电饭煲 + 蒸锅/烤箱，最大化并行。
-7. 最后10-15分钟专用于最终摆盘、装饰、擦拭台面灶台。
-8. 预留5-10分钟总缓冲时间。
+【强制调度铁则，必须100%遵守】
+1. 0分钟开工即刻启动全部长被动周期任务（蒸制/红烧/煨汤/电饭煲煮饭等被动时间≥60min的任务），优先占用非灶头设备（蒸锅、电饭煲、烤箱），灶头长时任务仅占用1个灶眼，预留至少2个灶眼用于后续并行操作。
+2. 开工后10-40min必须完成全量Mise en Place备菜：一次性完成所有菜品的洗菜、改刀、腌制、上浆、调料碗分装备料，实现「备菜一次完成，后续只炒不切」，杜绝中途切配的时间浪费。
+3. 所有被动等待窗口（尤其是≥20min的空档），必须100%填满无冲突的主动任务（凉菜制作、餐具摆盘、厨具清洁、台面整理等），实现零时间浪费。
+4. 快炒类热菜、需锁鲜出锅的菜品，强制安排在最后30min内完成，确保上桌时核心温度≥65℃，口感最佳。
+5. 每30min设置固定「2min巡检节点」，仅用于长时被动任务的尝味、火候调整、补水、翻拌，不新增额外操作，避免流程失控。
+6. 设备约束：严格适配标准家用厨房配置（2-3个燃气灶眼+1台电饭煲+1台蒸锅/烤箱），同设备同一时间仅安排1项任务，绝对禁止设备冲突。
+7. 最后15min，仅用于最终出锅、摆盘装饰、台面灶台全面擦拭、餐具归位，不安排任何新的烹饪操作。
+8. 全流程强制预留10min弹性缓冲时间，用于应对突发状况，缓冲时间不得提前占用。
 
-请按以下JSON格式输出时间轴（必须严格遵循JSON格式，方便程序解析）：
+【输出规则】
+1. 先按以下固定JSON结构输出全流程时间轴，时间颗粒度控制在10-30min/段，不得出现跨度过大的节点；每个时间节点必须包含固定5个字段，不得新增、删减、调换字段顺序；equipmentOccupancy字段必须明确标注每个设备的实时占用状态，无冲突。
+2. JSON输出完成后，用不超过200字的精简文字，输出时间轴执行核心要点，覆盖节点刚性、错峰执行、巡检必做、缓冲预留4个核心模块，无冗余内容。
 
 \`\`\`json
 {
   "timeline": [
     {
-      "timeRange": "0:00-0:10",
-      "activeTask": "启动炖汤、红烧肉等被动任务，淘米煮饭",
-      "passiveTask": "无",
-      "helperTask": "准备调料碗、检查食材"
-    },
-    {
-      "timeRange": "0:10-0:40",
-      "activeTask": "统一洗切所有蔬菜及肉类",
-      "passiveTask": "炖汤、红烧肉继续",
-      "helperTask": "洗锅、整理台面"
+      "timeRange": "HH:MM-HH:MM",
+      "activeTask": "当前时段需人工全程操作的核心任务，无歧义",
+      "passiveTask": "当前时段同步进行的无需人工干预的任务",
+      "equipmentOccupancy": {
+        "灶眼1": "占用状态/空闲",
+        "灶眼2": "占用状态/空闲",
+        "灶眼3": "占用状态/空闲",
+        "电饭煲": "占用状态/空闲",
+        "蒸锅/烤箱": "占用状态/空闲"
+      },
+      "helperTask": "当前时段可穿插完成的辅助性任务，无设备冲突"
     }
   ]
 }
 \`\`\`
 
-JSON之后，用简短文字说明时间轴执行要点。
+---
 
 **第四步：风险控制与优化建议**
-- 列出3个最常见风险点及应对措施
-- 若时间紧张，推荐优先保留/简化/放弃的1-2道菜，并说明理由
-- 厨房收尾技巧：如何实现边烹饪边清理、结束时基本无剩余工作量
+【输出规则】
+必须严格按以下3个模块输出，不得增减模块，内容精准可落地，无空话套话：
+1. TOP3核心风险点与闭环应对：列出单人操作12道菜家宴的3个最高发、最易导致流程崩盘的风险点，每个风险点必须包含「触发场景、前置预防措施、即时应对方案」，逻辑闭环。
+2. 时间紧张时的菜品取舍规则：明确推荐优先保留、可简化、可放弃的菜品，每类推荐必须说明核心理由，取舍逻辑必须符合「不破坏宴席整体结构、最小化工作量、最大化宾客体验」的原则。
+3. 边做边清厨房收尾技巧：输出标准化的全流程清洁方案，实现「烹饪结束时，厨房仅需3分钟即可完成最终收尾，无大量待洗厨具、无台面垃圾、无油污残留」，分预处理、烹饪、收尾3个阶段说明。
 
-输出全程保持专业语气，结尾以一句简短鼓励结束（如"按此执行，可高效完成高质量12道菜"）。严格按以上结构输出，开始。`;
+全部内容输出完成后，以一句简短、专业、强执行导向的鼓励语收尾。`;
 
   return `${systemPrompt}\n\n${menuInfo}`;
 }
@@ -551,7 +576,9 @@ function formatAIResponse(text) {
 
   matches.forEach(match => {
     try {
-      const jsonData = JSON.parse(match[1]);
+      // 清理JSON字符串，移除多余的冒号和空格
+      let jsonStr = match[1].replace(/"amount":\s*:/g, '"amount":');
+      const jsonData = JSON.parse(jsonStr);
       if (jsonData.dishes) {
         timeCards = renderTimeCards(jsonData);
       } else if (jsonData.timeline) {
@@ -562,8 +589,80 @@ function formatAIResponse(text) {
       textWithoutJson = textWithoutJson.replace(match[0], '').trim();
     } catch (e) {
       console.error('JSON parse error:', e);
+      // 尝试直接解析整个文本，看是否是纯JSON
+      try {
+        let jsonStr = text.replace(/```json|```/g, '').trim();
+        jsonStr = jsonStr.replace(/"amount":\s*:/g, '"amount":');
+        const jsonData = JSON.parse(jsonStr);
+        if (!jsonData.dishes && !jsonData.timeline) {
+          ingredientTable = renderIngredientTable(jsonData);
+          textWithoutJson = '';
+        }
+      } catch (e2) {
+        console.error('Direct JSON parse error:', e2);
+      }
     }
   });
+
+  // 如果没有找到JSON，但文本看起来像JSON，尝试直接解析
+  if (!ingredientTable && !timeCards && !timelineHTML) {
+    try {
+      let jsonStr = text.replace(/```json|```/g, '').trim();
+      // 清理JSON字符串中的常见错误
+      jsonStr = jsonStr
+        .replace(/"amount":\s*:/g, '"amount":')
+        .replace(/"note":\s*:\s*"([^"\\]*(\\.[^"\\]*)*)(?<!\\)"/g, (match, content) => {
+          return `"note":"${content.replace(/"/g, '\"')}"`;
+        })
+        .replace(/([^\\])"([^"\\]*(\\.[^"\\]*)*)(?<!\\)"/g, '$1"$2"')
+        .replace(/\s*([,:])\s*/g, '$1');
+      
+      // 检查并修复未终止的字符串
+      let quoteCount = 0;
+      let inString = false;
+      let lastQuoteIndex = -1;
+      
+      for (let i = 0; i < jsonStr.length; i++) {
+        if (jsonStr[i] === '"' && jsonStr[i-1] !== '\\') {
+          inString = !inString;
+          quoteCount++;
+          lastQuoteIndex = i;
+        }
+      }
+      
+      // 如果引号数量为奇数，尝试修复
+      if (quoteCount % 2 !== 0 && lastQuoteIndex > 0) {
+        jsonStr = jsonStr.substring(0, lastQuoteIndex) + '"' + jsonStr.substring(lastQuoteIndex);
+      }
+      
+      const jsonData = JSON.parse(jsonStr);
+      if (!jsonData.dishes && !jsonData.timeline) {
+        ingredientTable = renderIngredientTable(jsonData);
+        textWithoutJson = '';
+      }
+    } catch (e) {
+      console.error('Final JSON parse error:', e);
+      // 尝试更简单的修复方法
+      try {
+        // 移除可能导致问题的字符
+        let jsonStr = text.replace(/```json|```/g, '').trim();
+        jsonStr = jsonStr
+          .replace(/[^\x00-\x7F]/g, '') // 移除非ASCII字符
+          .replace(/"[^"\\]*(\\.[^"\\]*)*"/g, (match) => {
+            return match.replace(/"/g, '"');
+          })
+          .replace(/\s+/g, ' ');
+        
+        const jsonData = JSON.parse(jsonStr);
+        if (!jsonData.dishes && !jsonData.timeline) {
+          ingredientTable = renderIngredientTable(jsonData);
+          textWithoutJson = '';
+        }
+      } catch (e2) {
+        console.error('Simplified JSON parse error:', e2);
+      }
+    }
+  }
 
   let formattedText = textWithoutJson
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -711,7 +810,7 @@ function renderIngredientTable(data) {
     const color = categoryColors[category] || '#9b59b6';
 
     tableHTML += `
-      <div class="ingredient-category" style="border-left: 4px solid ${color};">
+      <div class="ingredient-category" data-category="${category}" style="border-left: 4px solid ${color};">
         <div class="category-header" style="background: linear-gradient(90deg, ${color}15, transparent);">
           <span class="category-icon">${icon}</span>
           <span class="category-name">${category}</span>
