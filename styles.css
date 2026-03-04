@@ -670,6 +670,20 @@ body {
   margin-top: 8px;
 }
 
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.history-description {
+  font-size: 0.9rem;
+  color: var(--text-medium);
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
 .empty-history {
   text-align: center;
   padding: 40px 20px;

@@ -2,12 +2,13 @@ let currentCategory = 'all';
 let currentSearch = '';
 let updateHistory = JSON.parse(localStorage.getItem('recipeUpdateHistory') || '[]');
 
-function addUpdateRecord(recipe) {
+function addUpdateRecord(recipe, description = '新增菜谱') {
   const record = {
     id: recipe.id,
     name: recipe.name,
     category: recipe.category,
     categoryName: recipe.categoryName,
+    description: description,
     time: new Date().toLocaleString('zh-CN'),
     timestamp: Date.now()
   };
@@ -57,8 +58,11 @@ function renderHistory() {
     
     return `
       <div class="history-item" onclick="showRecipeDetail(${record.id})">
-        <div class="recipe-name">${record.name}</div>
-        <span class="recipe-category" style="background: ${categoryColors[record.category]}">${record.categoryName}</span>
+        <div class="history-header">
+          <div class="recipe-name">${record.name}</div>
+          <span class="recipe-category" style="background: ${categoryColors[record.category]}">${record.categoryName}</span>
+        </div>
+        <div class="history-description">📝 ${record.description || '新增菜谱'}</div>
         <div class="update-time">🕐 ${record.time}</div>
       </div>
     `;
@@ -288,6 +292,7 @@ function initializeDemoHistory() {
         name: recipe.name,
         category: recipe.category,
         categoryName: recipe.categoryName,
+        description: '新增菜谱',
         time: new Date(now - (index * 86400000)).toLocaleString('zh-CN'),
         timestamp: now - (index * 86400000)
       };
