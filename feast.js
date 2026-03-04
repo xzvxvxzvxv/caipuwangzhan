@@ -3,6 +3,56 @@ var selectedRecipes = [];
 var currentFilter = 'all';
 var isCustomMode = false;
 
+// 检查必要文件是否存在
+function checkRequiredFiles() {
+  return new Promise((resolve, reject) => {
+    const requiredImage = '15429A82CAD745CA703D193AC6956342.jpeg';
+    
+    fetch(requiredImage, {
+      method: 'HEAD'
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log('必要文件检查通过：', requiredImage);
+        resolve(true);
+      } else {
+        console.error('必要文件不存在：', requiredImage);
+        reject(new Error('必要文件不存在：' + requiredImage));
+      }
+    })
+    .catch(error => {
+      console.error('文件检查失败：', error);
+      reject(new Error('文件检查失败：' + error.message));
+    });
+  });
+}
+
+// 初始化函数
+async function initApp() {
+  try {
+    await checkRequiredFiles();
+    console.log('程序初始化中...');
+    // 继续执行应用初始化
+    initializeApp();
+  } catch (error) {
+    console.error('初始化失败：', error);
+    // 显示错误消息
+    const container = document.querySelector('.container');
+    if (container) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 50px; background: white; border-radius: 16px; margin: 20px auto; max-width: 600px;">
+          <h2 style="color: #e74c3c; margin-bottom: 20px;">❌ 程序启动失败</h2>
+          <p style="font-size: 1.1rem; margin-bottom: 15px;">必要文件不存在，程序无法启动</p>
+          <p style="color: #5d6d7e; margin-bottom: 30px;">请确保文件存在：<br>15429A82CAD745CA703D193AC6956342.jpeg</p>
+          <button onclick="location.reload()" style="padding: 12px 24px; background: #e67e22; color: white; border: none; border-radius: 50px; font-size: 1rem; cursor: pointer;">
+            重新检查
+          </button>
+        </div>
+      `;
+    }
+  }
+}
+
 // 默认System Prompt
 const defaultSystemPrompt = `你是一位拥有25年中餐全菜系研发与家宴落地经验的国家级中式烹调高级技师，深耕川粤鲁苏闽浙湘徽八大菜系，精通大众聚餐级家常菜的标准化落地，专精单人家用厨房的极限多线程并行操作、全流程风险管控与食材零浪费规划，累计完成超1200场4-12人家宴的全流程闭环执行，熟知家用厨房设备的极限利用与单人操作的体能合理分配。
 
@@ -104,6 +154,15 @@ JSON结构：
 2. 时间轴必须包含缓冲时间（建议总时间的10%作为应急缓冲）；
 3. 必须标注可提前准备的环节（如：提前腌制、提前焯水）；
 4. 必须标注可并行的任务组合（如：A菜炖煮时可进行B菜准备）。`;
+
+// 原始初始化函数
+function initializeApp() {
+  // 初始化应用逻辑
+  console.log('应用初始化完成');
+}
+
+// 页面加载完成后初始化应用
+document.addEventListener('DOMContentLoaded', initApp);
 
 // 获取当前System Prompt（从localStorage或默认值）
 function getSystemPrompt() {
