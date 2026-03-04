@@ -14,27 +14,36 @@
     </header>
 
     <section class="control-panel">
+      <!-- 第一行：模式切换 -->
       <div class="mode-switch">
         <button class="mode-btn active" id="randomMode">🎲 随机生成</button>
         <button class="mode-btn" id="customMode">✏️ 自选菜品</button>
       </div>
-      <button class="generate-btn" id="generateBtn">
-        <span class="btn-icon">🎲</span>
-        <span class="btn-text">随机生成菜单</span>
-      </button>
-      <button class="ai-btn" id="aiBtn" disabled>
-        <span class="btn-icon">🤖</span>
-        <span class="btn-text">AI时间规划</span>
-      </button>
-      <button class="export-btn" id="exportBtn" disabled>
-        <span class="btn-icon">📄</span>
-        <span class="btn-text">导出PDF</span>
-      </button>
-      <button class="settings-btn" id="settingsBtn">
-        <span class="btn-icon">⚙️</span>
-        <span class="btn-text">设置</span>
-      </button>
-      <a href="index.html" class="back-link">← 返回菜谱首页</a>
+      
+      <!-- 第二行：操作按钮组 -->
+      <div class="action-buttons">
+        <button class="generate-btn" id="generateBtn">
+          <span class="btn-icon">🎲</span>
+          <span class="btn-text">随机生成菜单</span>
+        </button>
+        <button class="ai-btn" id="aiBtn" disabled>
+          <span class="btn-icon">🤖</span>
+          <span class="btn-text">AI时间规划</span>
+        </button>
+        <button class="export-btn" id="exportBtn" disabled>
+          <span class="btn-icon">📄</span>
+          <span class="btn-text">导出PDF</span>
+        </button>
+        <button class="settings-btn" id="settingsBtn">
+          <span class="btn-icon">⚙️</span>
+          <span class="btn-text">设置</span>
+        </button>
+      </div>
+      
+      <!-- 第三行：返回链接 -->
+      <div class="back-link-wrapper">
+        <a href="index.html" class="back-link">← 返回菜谱首页</a>
+      </div>
     </section>
 
     <section class="custom-selector" id="customSelector" style="display: none;">
