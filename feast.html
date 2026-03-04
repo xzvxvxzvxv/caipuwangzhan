@@ -30,6 +30,10 @@
         <span class="btn-icon">📄</span>
         <span class="btn-text">导出PDF</span>
       </button>
+      <button class="settings-btn" id="settingsBtn">
+        <span class="btn-icon">⚙️</span>
+        <span class="btn-text">设置</span>
+      </button>
       <a href="index.html" class="back-link">← 返回菜谱首页</a>
     </section>
 
@@ -102,6 +106,24 @@
     <div class="modal-content">
       <button class="modal-close" id="modalClose">&times;</button>
       <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="settingsModal">
+    <div class="modal-content settings-modal-content">
+      <button class="modal-close" id="settingsModalClose">&times;</button>
+      <div class="modal-body">
+        <h2>⚙️ AI 提示词设置</h2>
+        <p class="settings-desc">自定义AI分析时使用的提示词，修改后将应用于下一次AI时间规划请求。</p>
+        <div class="settings-form">
+          <label for="systemPromptInput">System Prompt（系统提示词）:</label>
+          <textarea id="systemPromptInput" rows="15" placeholder="请输入系统提示词..."></textarea>
+          <div class="settings-buttons">
+            <button class="save-settings-btn" id="saveSettingsBtn">💾 保存设置</button>
+            <button class="reset-settings-btn" id="resetSettingsBtn">🔄 恢复默认</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
