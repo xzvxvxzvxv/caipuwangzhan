@@ -3,8 +3,9 @@ let currentSearch = '';
 let updateHistory = JSON.parse(localStorage.getItem('recipeUpdateHistory') || '[]');
 
 // 从Supabase获取数据
-let recipes = [];
-let spices = [];
+// 注意：这里使用dbRecipes避免与recipes.js中的recipes变量冲突
+let dbRecipes = [];
+let dbSpices = [];
 let isSupabaseLoaded = false;
 
 // 初始化数据
@@ -22,17 +23,17 @@ async function initData() {
   const dbSpices = await supabaseClient.getSpices();
 
   if (dbRecipes && dbRecipes.length > 0) {
-    recipes = dbRecipes;
+    dbRecipes = dbRecipes;
     isSupabaseLoaded = true;
-    console.log('从Supabase加载了', recipes.length, '道菜谱');
+    console.log('从Supabase加载了', dbRecipes.length, '道菜谱');
   } else {
     // 使用本地数据作为备份
     console.log('使用本地备份数据');
   }
 
   if (dbSpices && dbSpices.length > 0) {
-    spices = dbSpices;
-    console.log('从Supabase加载了', spices.length, '种香料');
+    dbSpices = dbSpices;
+    console.log('从Supabase加载了', dbSpices.length, '种香料');
   }
 
   // 初始化页面
@@ -153,10 +154,10 @@ function getDailyRecommend() {
 
   const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
 
-  const stapleRecipes = recipes.filter(r => r.category === 'staple');
-  const vegetableRecipes = recipes.filter(r => r.category === 'vegetable');
-  const meatRecipes = recipes.filter(r => r.category === 'meat');
-  const soupRecipes = recipes.filter(r => r.category === 'soup');
+  const stapleRecipes = dbRecipes.filter(r => r.category === 'staple');
+  const vegetableRecipes = dbRecipes.filter(r => r.category === 'vegetable');
+  const meatRecipes = dbRecipes.filter(r => r.category === 'meat');
+  const soupRecipes = dbRecipes.filter(r => r.category === 'soup');
 
   const recommended = [
     stapleRecipes[dayOfYear % stapleRecipes.length],
@@ -191,7 +192,7 @@ function searchRecipes(searchText, category) {
 
   const searchLower = searchText.toLowerCase();
   
-  return recipes.filter(recipe => {
+  return dbRecipes.filter(recipe => {
     const matchCategory = category === 'all' || recipe.category === category;
     
     if (!searchText) {
