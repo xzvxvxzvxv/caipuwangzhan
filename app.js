@@ -2,6 +2,54 @@ let currentCategory = 'all';
 let currentSearch = '';
 let updateHistory = JSON.parse(localStorage.getItem('recipeUpdateHistory') || '[]');
 
+// 从Supabase获取数据
+let recipes = [];
+let spices = [];
+let isSupabaseLoaded = false;
+
+// 初始化数据
+async function initData() {
+  const container = document.getElementById('recipeList');
+  container.innerHTML = `
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      <p>加载菜谱数据中...</p>
+    </div>
+  `;
+
+  // 尝试从Supabase获取数据
+  const dbRecipes = await supabaseClient.getRecipes();
+  const dbSpices = await supabaseClient.getSpices();
+
+  if (dbRecipes && dbRecipes.length > 0) {
+    recipes = dbRecipes;
+    isSupabaseLoaded = true;
+    console.log('从Supabase加载了', recipes.length, '道菜谱');
+  } else {
+    // 使用本地数据作为备份
+    console.log('使用本地备份数据');
+  }
+
+  if (dbSpices && dbSpices.length > 0) {
+    spices = dbSpices;
+    console.log('从Supabase加载了', spices.length, '种香料');
+  }
+
+  // 初始化页面
+  initApp();
+}
+
+// 初始化应用
+function initApp() {
+  updateNotificationBadge();
+  renderDailyRecommend();
+  renderRecipeList();
+  initCategoryNav();
+  initSearch();
+  initHistoryModal();
+  initializeDemoHistory();
+}
+
 function addUpdateRecord(recipe, description = '新增菜谱') {
   const record = {
     id: recipe.id,
@@ -270,12 +318,7 @@ function initSearch() {
 }
 
 function init() {
-  renderDailyRecommend();
-  renderRecipeList();
-  initCategoryNav();
-  initSearch();
-  initHistoryModal();
-  initializeDemoHistory();
+  initData();
 }
 
 function initializeDemoHistory() {

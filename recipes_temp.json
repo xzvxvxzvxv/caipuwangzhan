@@ -1,4 +1,4 @@
-const recipes = [
+[
   {
     id: 1,
     name: '蛋炒饭',
@@ -3459,24 +3459,4 @@ const recipes = [
       '把调好的碗汁再次搅拌均匀，倒入锅中，转大火翻炒，使汤汁浓稠，均匀包裹在猪腰和配菜上'
     ]
   }
-];
-
-const categoryMap = {
-  staple: '主食',
-  vegetable: '素菜',
-  meat: '荤菜',
-  soup: '汤',
-  snack: '小吃',
-  dessert: '甜点',
-  midnight: '宵夜'
-};
-
-const categoryIcons = {
-  staple: '🍚',
-  vegetable: '🥬',
-  meat: '🍖',
-  soup: '🍲',
-  snack: '🥟',
-  dessert: '🍰',
-  midnight: '🌙'
-};
+]

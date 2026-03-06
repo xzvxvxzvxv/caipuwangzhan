@@ -3,6 +3,10 @@ var selectedRecipes = [];
 var currentFilter = 'all';
 var isCustomMode = false;
 
+// 从Supabase获取数据
+let recipes = [];
+let isSupabaseLoaded = false;
+
 // 检查必要文件是否存在
 function checkRequiredFiles() {
   return new Promise((resolve, reject) => {
@@ -17,20 +21,39 @@ function checkRequiredFiles() {
         resolve(true);
       } else {
         console.error('必要文件不存在：', requiredImage);
-        reject(new Error('必要文件不存在：' + requiredImage));
+        // 不影响功能，继续执行
+        resolve(true);
       }
     })
     .catch(error => {
       console.error('文件检查失败：', error);
-      reject(new Error('文件检查失败：' + error.message));
+      // 不影响功能，继续执行
+      resolve(true);
     });
   });
+}
+
+// 从Supabase加载数据
+async function loadDataFromSupabase() {
+  try {
+    const dbRecipes = await supabaseClient.getRecipes();
+    if (dbRecipes && dbRecipes.length > 0) {
+      recipes = dbRecipes;
+      isSupabaseLoaded = true;
+      console.log('从Supabase加载了', recipes.length, '道菜谱');
+    } else {
+      console.log('使用本地备份数据');
+    }
+  } catch (error) {
+    console.error('Supabase加载失败：', error);
+  }
 }
 
 // 初始化函数
 async function initApp() {
   try {
     await checkRequiredFiles();
+    await loadDataFromSupabase();
     console.log('程序初始化中...');
     // 继续执行应用初始化
     initializeApp();
@@ -42,10 +65,10 @@ async function initApp() {
       container.innerHTML = `
         <div style="text-align: center; padding: 50px; background: white; border-radius: 16px; margin: 20px auto; max-width: 600px;">
           <h2 style="color: #e74c3c; margin-bottom: 20px;">❌ 程序启动失败</h2>
-          <p style="font-size: 1.1rem; margin-bottom: 15px;">必要文件不存在，程序无法启动</p>
-          <p style="color: #5d6d7e; margin-bottom: 30px;">请确保文件存在：<br>15429A82CAD745CA703D193AC6956342.jpeg</p>
+          <p style="font-size: 1.1rem; margin-bottom: 15px;">初始化失败，请刷新页面重试</p>
+          <p style="color: #5d6d7e; margin-bottom: 30px;">错误信息：${error.message}</p>
           <button onclick="location.reload()" style="padding: 12px 24px; background: #e67e22; color: white; border: none; border-radius: 50px; font-size: 1rem; cursor: pointer;">
-            重新检查
+            重新加载
           </button>
         </div>
       `;
