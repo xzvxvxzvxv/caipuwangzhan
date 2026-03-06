@@ -4,7 +4,8 @@ var currentFilter = 'all';
 var isCustomMode = false;
 
 // 从Supabase获取数据
-let recipes = [];
+// 注意：这里使用dbRecipes避免与recipes.js中的recipes变量冲突
+let dbRecipes = [];
 let isSupabaseLoaded = false;
 
 // 检查必要文件是否存在
@@ -38,9 +39,9 @@ async function loadDataFromSupabase() {
   try {
     const dbRecipes = await supabaseClient.getRecipes();
     if (dbRecipes && dbRecipes.length > 0) {
-      recipes = dbRecipes;
+      dbRecipes = dbRecipes;
       isSupabaseLoaded = true;
-      console.log('从Supabase加载了', recipes.length, '道菜谱');
+      console.log('从Supabase加载了', dbRecipes.length, '道菜谱');
     } else {
       console.log('使用本地备份数据');
     }
@@ -213,10 +214,10 @@ function shuffleArray(array) {
 }
 
 function generateMenu() {
-  const meatRecipes = shuffleArray(recipes.filter(r => r.category === 'meat'));
-  const vegetableRecipes = shuffleArray(recipes.filter(r => r.category === 'vegetable'));
-  const soupRecipes = shuffleArray(recipes.filter(r => r.category === 'soup'));
-  const stapleRecipes = shuffleArray(recipes.filter(r => r.category === 'staple'));
+  const meatRecipes = shuffleArray(dbRecipes.filter(r => r.category === 'meat'));
+  const vegetableRecipes = shuffleArray(dbRecipes.filter(r => r.category === 'vegetable'));
+  const soupRecipes = shuffleArray(dbRecipes.filter(r => r.category === 'soup'));
+  const stapleRecipes = shuffleArray(dbRecipes.filter(r => r.category === 'staple'));
 
   const menu = [
     ...meatRecipes.slice(0, 5),
@@ -265,7 +266,7 @@ function updateStats() {
 }
 
 function showRecipeDetail(id) {
-  const recipe = recipes.find(r => r.id === id);
+  const recipe = dbRecipes.find(r => r.id === id);
   if (!recipe) return;
 
   const modal = document.getElementById('recipeModal');
@@ -1044,10 +1045,10 @@ function toggleMode(mode) {
 
 function renderAvailableRecipes() {
   const container = document.getElementById('availableRecipes');
-  let filteredRecipes = recipes;
+  let filteredRecipes = dbRecipes;
 
   if (currentFilter !== 'all') {
-    filteredRecipes = recipes.filter(r => r.category === currentFilter);
+    filteredRecipes = dbRecipes.filter(r => r.category === currentFilter);
   }
 
   container.innerHTML = `
@@ -1072,7 +1073,7 @@ function renderAvailableRecipes() {
 }
 
 function toggleRecipe(id) {
-  const recipe = recipes.find(r => r.id === id);
+  const recipe = dbRecipes.find(r => r.id === id);
   if (!recipe) return;
 
   const index = selectedRecipes.findIndex(r => r.id === id);
